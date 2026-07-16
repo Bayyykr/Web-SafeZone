@@ -1,0 +1,81 @@
+.infographic-page {
+    min-height: calc(100vh - var(--header-height));
+    background: #ffffff;
+    padding: 22px 32px 40px;
+}
+
+.infographic-section {
+    margin-bottom: 28px;
+}
+
+.infographic-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.infographic-filter label {
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.infographic-filter input {
+    height: 34px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    background: #ffffff;
+    padding: 0 10px;
+    color: #111827;
+    font-size: 12px;
+    outline: none;
+}
+
+.infographic-filter button {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #4caf50;
+    color: #ffffff;
+}
+
+.infographic-filter button svg {
+    width: 15px;
+    height: 15px;
+}
+
+.infographic-title {
+    margin-bottom: 8px;
+    color: #111827;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.infographic-chart {
+    position: relative;
+    width: 100%;
+}
+
+.infographic-line-chart {
+    height: 305px;
+}
+
+.infographic-kecamatan-chart {
+    height: 390px;
+}
+
+.infographic-category-chart {
+    height: 260px;
+}
+
+@media (max-width: 640px) {
+    .infographic-filter {
+        flex-wrap: wrap;
+    }
+}

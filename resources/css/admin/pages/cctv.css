@@ -1,0 +1,247 @@
+.cctv-page {
+    min-height: calc(100vh - 56px);
+    background: #ffffff;
+    padding: 24px 32px 32px;
+}
+
+.cctv-topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.cctv-search {
+    display: flex;
+    height: 36px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    background: #ffffff;
+}
+
+.cctv-search input {
+    width: 210px;
+    border: 0;
+    padding: 0 12px;
+    color: #111827;
+    font-size: 13px;
+    outline: none;
+}
+
+.cctv-search button,
+.cctv-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.cctv-search button {
+    width: 38px;
+    background: #2454c6;
+    color: #ffffff;
+}
+
+.cctv-action-btn {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #2454c6;
+    padding: 0 12px;
+}
+
+.cctv-action-btn.secondary {
+    color: #374151;
+}
+
+.cctv-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.cctv-card {
+    overflow: hidden;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cctv-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.06), 0 10px 20px -8px rgba(0, 0, 0, 0.04);
+}
+
+.cctv-stream {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+}
+
+.cctv-stream iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.cctv-empty-preview {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    color: #cbd5e1;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cctv-stream::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent 30%, rgba(0, 0, 0, 0.35));
+}
+
+.cctv-live-badge,
+.cctv-time {
+    position: absolute;
+    z-index: 2;
+    top: 10px;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.cctv-live-badge {
+    left: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 6px;
+    background: var(--danger);
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.cctv-live-badge span {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #ffffff;
+}
+
+.cctv-time {
+    right: 10px;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.cctv-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 64px;
+    padding: 14px 16px;
+    color: var(--text);
+    background: #ffffff;
+}
+
+.cctv-title-link {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    transition: color 0.2s ease;
+}
+
+.cctv-title-link:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.cctv-card-footer p {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cctv-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.cctv-empty-state {
+    grid-column: 1 / -1;
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 48px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+}
+
+.cctv-empty-state h2 {
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.cctv-empty-state p {
+    margin: 8px auto 20px;
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+@media (max-width: 1280px) {
+    .cctv-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1024px) {
+    .cctv-topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .cctv-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .cctv-search input {
+        width: 100%;
+    }
+    .cctv-grid {
+        grid-template-columns: 1fr;
+    }
+}

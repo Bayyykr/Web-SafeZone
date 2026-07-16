@@ -1,0 +1,32 @@
+:root {
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 86px;
+    --header-height: 72px;
+    --page-bg: #f8fafc;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --accent: #2952e3;
+    --accent-light: #eff3ff;
+    --accent-hover: #1e3eb8;
+    --success: #16a34a;
+    --success-bg: #dcfce7;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+body.preload,
+body.preload * {
+    transition: none !important;
+}
+
+body {
+    background: var(--page-bg);
+    color: var(--text);
+    font-family: 'Figtree', sans-serif;
+}

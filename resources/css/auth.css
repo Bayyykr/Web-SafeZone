@@ -1,0 +1,25 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.admin-form-input {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #0f0f0e;
+    background-color: #f8fafc;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-form-input::placeholder {
+    color: #94a3b8;
+}
+
+.admin-form-input:focus {
+    outline: none;
+    border-color: #2952e3;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(41, 82, 227, 0.1);
+}
