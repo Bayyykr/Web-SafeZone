@@ -55,6 +55,12 @@ if [ "$RUN_SEEDER" = "true" ]; then
     php artisan db:seed --force || echo "==> Peringatan: Seeder gagal atau sudah terisi."
 fi
 
+# Jalankan sinkronisasi Firebase users otomatis jika SYNC_FIREBASE_USERS bernilai true
+if [ "$SYNC_FIREBASE_USERS" = "true" ]; then
+    echo "==> Running Firebase users synchronization..."
+    php artisan firebase:sync-users || echo "==> Peringatan: Sinkronisasi Firebase gagal."
+fi
+
 # Jalankan web server FrankenPHP pada PORT yang diberikan Railway
 export PORT="${PORT:-8080}"
 echo "==> FrankenPHP siap melayani permintaan di port :$PORT"

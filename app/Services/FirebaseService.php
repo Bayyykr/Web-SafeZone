@@ -16,26 +16,56 @@ class FirebaseService
         ]);
     }
 
-    private function getCredentialsPath(): ?string
+    public function getCredentials(): ?array
     {
-        $path = env("FIREBASE_CREDENTIALS_PATH");
-        if (!$path) return null;
+        // 1. Cek dari environment variable FIREBASE_CREDENTIALS_JSON (raw JSON string)
+        $rawJson = env("FIREBASE_CREDENTIALS_JSON");
+        if ($rawJson) {
+            $data = json_decode($rawJson, true);
+            if ($data && !empty($data["client_email"]) && !empty($data["private_key"])) {
+                return $data;
+            }
+        }
 
-        $fullPath = base_path($path);
-        if (file_exists($fullPath)) return $fullPath;
-        if (file_exists($path)) return $path;
+        // 2. Cek dari environment variable FIREBASE_CREDENTIALS_BASE64
+        $base64 = env("FIREBASE_CREDENTIALS_BASE64");
+        if ($base64) {
+            $decoded = base64_decode($base64, true);
+            if ($decoded) {
+                $data = json_decode($decoded, true);
+                if ($data && !empty($data["client_email"]) && !empty($data["private_key"])) {
+                    return $data;
+                }
+            }
+        }
+
+        // 3. Fallback ke file lokal jika ada
+        $path = env("FIREBASE_CREDENTIALS_PATH", "storage/app/firebase-service-account.json");
+        if ($path) {
+            $fullPath = base_path($path);
+            $target = file_exists($fullPath) ? $fullPath : (file_exists($path) ? $path : null);
+            if ($target) {
+                $content = @file_get_contents($target);
+                if ($content) {
+                    $data = json_decode($content, true);
+                    if ($data && !empty($data["client_email"]) && !empty($data["private_key"])) {
+                        return $data;
+                    }
+                }
+            }
+        }
 
         return null;
     }
 
+    public function isConfigured(): bool
+    {
+        return $this->getCredentials() !== null;
+    }
+
     private function getAccessToken(string $scope): ?string
     {
-        $path = $this->getCredentialsPath();
-        if (!$path) {
-            return null;
-        }
-
-        $config = json_decode(file_get_contents($path), true);
+        $config = $this->getCredentials();
         if (!$config) {
             return null;
         }
@@ -80,13 +110,12 @@ class FirebaseService
 
     public function sendNotification(string $deviceToken, string $title, string $body, array $data = []): bool
     {
-        $path = $this->getCredentialsPath();
-        if (!$path) {
-            Log::warning("Firebase credentials file not found or not configured.");
+        $config = $this->getCredentials();
+        if (!$config) {
+            Log::warning("Firebase credentials not found or not configured.");
             return false;
         }
 
-        $config = json_decode(file_get_contents($path), true);
         $projectId = $config["project_id"] ?? null;
         if (!$projectId) {
             Log::warning("Firebase project ID not found in credentials.");
@@ -120,12 +149,11 @@ class FirebaseService
 
     public function getFirebaseUidByEmail(string $email): ?string
     {
-        $path = $this->getCredentialsPath();
-        if (!$path) {
+        $config = $this->getCredentials();
+        if (!$config) {
             return null;
         }
 
-        $config = json_decode(file_get_contents($path), true);
         $projectId = $config["project_id"] ?? null;
         if (!$projectId) {
             return null;
@@ -152,13 +180,12 @@ class FirebaseService
 
     public function createUserInFirebaseAuth(string $email, string $password, string $displayName): ?string
     {
-        $path = $this->getCredentialsPath();
-        if (!$path) {
-            Log::warning("Firebase credentials file not found or not configured.");
+        $config = $this->getCredentials();
+        if (!$config) {
+            Log::warning("Firebase credentials not found or not configured.");
             return null;
         }
 
-        $config = json_decode(file_get_contents($path), true);
         $projectId = $config["project_id"] ?? null;
         if (!$projectId) {
             Log::warning("Firebase project ID not found in credentials.");
@@ -195,12 +222,11 @@ class FirebaseService
 
     public function updateUserPasswordInFirebaseAuth(string $email, string $newPassword): bool
     {
-        $path = $this->getCredentialsPath();
-        if (!$path) {
+        $config = $this->getCredentials();
+        if (!$config) {
             return false;
         }
 
-        $config = json_decode(file_get_contents($path), true);
         $projectId = $config["project_id"] ?? null;
         if (!$projectId) {
             return false;
