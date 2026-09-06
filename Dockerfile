@@ -14,9 +14,15 @@ COPY . .
 RUN npm run build
 
 # ==========================================
-# STAGE 2: PHP 8.3 & FrankenPHP Runtime
+# STAGE 2: PHP 8.4 & FrankenPHP Runtime
 # ==========================================
-FROM dunglas/frankenphp:1-php8.3-alpine
+FROM dunglas/frankenphp:1-php8.4-alpine
+
+# Set environment variables produksi
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    PORT=8080 \
+    COMPOSER_ALLOW_SUPERUSER=1
 
 # Install PHP extensions yang dibutuhkan Laravel
 RUN install-php-extensions \
@@ -35,11 +41,6 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Set environment variables produksi
-ENV APP_ENV=production \
-    APP_DEBUG=false \
-    PORT=8080
-
 # Install dependensi composer (cacheable layer)
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --no-scripts --prefer-dist --optimize-autoloader
@@ -50,7 +51,7 @@ COPY . .
 # Ambil hasil kompilasi Vite dari Stage 1
 COPY --from=frontend /app/public/build ./public/build
 
-# Optimasi autoloader Composer
+# Finish composer autoload
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
 
 # Copy Caddyfile dan Entrypoint Script
