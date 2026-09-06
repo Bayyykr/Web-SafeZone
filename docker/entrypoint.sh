@@ -3,6 +3,14 @@ set -e
 
 echo "==> Starting GeoCrime-Web container initialization..."
 
+# Validasi APP_URL: cegah crash 'Invalid URI' jika domain Railway belum di-generate
+case "$APP_URL" in
+    ""|"http://"|"https://"|"http:/"|"https:/")
+        echo "==> APP_URL belum valid ('$APP_URL'). Menggunakan fallback 'http://localhost'..."
+        export APP_URL="http://localhost"
+        ;;
+esac
+
 # Pastikan permission folder storage dan bootstrap cache aman
 mkdir -p /app/storage/framework/cache
 mkdir -p /app/storage/framework/sessions
