@@ -1,0 +1,12 @@
+{
+    frankenphp
+    auto_https off
+}
+
+:{$PORT:8080} {
+    root * /app/public
+    encode zstd gzip
+
+    # Serve static assets and forward all dynamic requests to Laravel index.php
+    php_server
+}
