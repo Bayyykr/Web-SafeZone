@@ -18,8 +18,9 @@ class PolsekResource extends JsonResource
             'id' => $this->id,
             'nama' => $this->nama,
             'alamat' => $this->alamat,
-            'nomor_telepon' => $this->nomor_telepon,
-            'lokasi' => $this->lokasi ? new LocationResource($this->lokasi) : null, // Assuming LocationResource exists
+            'nomor_telepon' => $this->telepon ?? $this->nomor_telepon,
+            'telepon' => $this->telepon,
+            'lokasi' => $this->lokasi ? new LocationResource($this->lokasi) : null,
         ];
     }
 }

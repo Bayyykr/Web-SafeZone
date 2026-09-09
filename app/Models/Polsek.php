@@ -19,4 +19,9 @@ class Polsek extends Model
     {
         return $this->hasMany(Laporan::class);
     }
+
+    public function getNomorTeleponAttribute(): ?string
+    {
+        return $this->telepon;
+    }
 }

@@ -17,7 +17,7 @@ class EmergencyReportResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'nearest_polsek' => $this->polsek ? new PolsekResource($this->polsek) : null, // Assuming PolsekResource exists
+            'nearest_polsek' => ($this->nearestPolsek ?? $this->polsek) ? new PolsekResource($this->nearestPolsek ?? $this->polsek) : null,
             'kode_darurat' => $this->kode_darurat,
             'status' => $this->status,
             'latitude' => (float) $this->latitude,

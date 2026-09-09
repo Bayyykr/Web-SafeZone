@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             LaporanSeeder::class,
             BeritaSeeder::class,
             EmergencyReportSeeder::class,
+            MakassarLocationSeeder::class,
         ]);
     }
 }

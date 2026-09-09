@@ -49,6 +49,11 @@ class EmergencyReport extends Model
         return $this->belongsTo(Polsek::class, 'nearest_polsek_id');
     }
 
+    public function polsek(): BelongsTo
+    {
+        return $this->nearestPolsek();
+    }
+
     public function getResponseTimeMinutesAttribute(): ?int
     {
         if (! $this->waktu_sos || ! $this->waktu_dispatch) {

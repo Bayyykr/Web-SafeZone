@@ -24,7 +24,20 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $firebaseUid = app(FirebaseService::class)->getFirebaseUidByEmail($request->email);
+        $firebaseService = app(FirebaseService::class);
+        $firebaseUid = $firebaseService->getFirebaseUidByEmail($request->email);
+
+        if (!$firebaseUid && $user->firebase_uid) {
+            $firebaseUid = $user->firebase_uid;
+        }
+
+        if (!$firebaseUid) {
+            $firebaseUid = $firebaseService->createUserInFirebaseAuth($user->email, $request->password, $user->name);
+        }
+
+        if (!$firebaseUid && !$firebaseService->getCredentials()) {
+            $firebaseUid = 'local_uid_' . $user->id;
+        }
 
         if (!$firebaseUid) {
             return response()->json([
