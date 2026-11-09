@@ -139,6 +139,14 @@
     line-height: 1;
 }
 
+.cctv-live-badge.style-off {
+    background: #64748b;
+}
+
+.cctv-live-badge.style-off span {
+    background: #cbd5e1;
+}
+
 .cctv-live-badge span {
     width: 6px;
     height: 6px;

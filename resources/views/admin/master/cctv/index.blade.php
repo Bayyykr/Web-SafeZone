@@ -43,6 +43,9 @@
                 <div class="user-stat-pill pill-accent">
                     <strong>{{ $stats['nonaktif'] }}</strong> Nonaktif
                 </div>
+                <div class="user-stat-pill" style="border-color: #c7d2fe; background: #eef2ff; color: #4338ca;">
+                    <strong>{{ $stats['ai_streams'] ?? 0 }}</strong> BegalVision AI
+                </div>
             </div>
         </div>
 
@@ -80,12 +83,34 @@
                 @forelse ($items as $item)
                     <article class="cctv-card">
                         <div class="cctv-stream">
-                            @if ($item->embed_url)
+                            @if ($item->is_youtube && $item->embed_url)
                                 <iframe
                                     src="{{ $item->embed_url }}"
                                     title="Live Streaming {{ $item->nama }}"
                                     loading="lazy"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                                </iframe>
+                            @elseif ($item->is_mjpeg && $item->url_stream)
+                                <img
+                                    src="{{ $item->url_stream }}"
+                                    alt="Live Streaming {{ $item->nama }}"
+                                    class="w-full h-full object-cover"
+                                    loading="lazy"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                />
+                                <div class="cctv-empty-preview" style="display: none;">
+                                    <svg width="34" height="34" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                    </svg>
+                                    <span>Stream BegalVision Menghubungkan...</span>
+                                    <a href="{{ route('admin.cctvs.show', $item) }}" style="color: #60a5fa; text-decoration: underline; font-size: 11px;">Buka Pemantauan Live</a>
+                                </div>
+                            @elseif ($item->embed_url)
+                                <iframe
+                                    src="{{ $item->embed_url }}"
+                                    title="Live Streaming {{ $item->nama }}"
+                                    loading="lazy"
                                     allowfullscreen>
                                 </iframe>
                             @else
@@ -97,10 +122,18 @@
                                 </div>
                             @endif
 
-                            <span class="cctv-live-badge">
-                                <span></span>
-                                {{ $item->aktif ? 'LIVE' : 'OFF' }}
-                            </span>
+                            <div style="position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 6px; z-index: 5;">
+                                <span class="cctv-live-badge {{ $item->aktif ? '' : 'style-off' }}">
+                                    <span></span>
+                                    {{ $item->aktif ? 'LIVE' : 'OFF' }}
+                                </span>
+                                @if ($item->is_begalvision)
+                                    <span style="background: rgba(79, 70, 229, 0.9); color: #fff; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">
+                                        <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                        AI DETECT
+                                    </span>
+                                @endif
+                            </div>
                             <span class="cctv-time">{{ now()->format('d/m/Y, h:i:s A') }}</span>
                         </div>
 
@@ -112,6 +145,10 @@
                                 </p>
                             </div>
                             <div class="cctv-card-actions">
+                                <a href="{{ route('admin.cctvs.show', $item) }}" class="btn-secondary" style="padding: 4px 10px; font-size: 11px; font-weight: 700; height: 32px; display: inline-flex; align-items: center; gap: 4px;" title="Pantau Live AI">
+                                    <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    Pantau
+                                </a>
                                 <button class="btn-edit" type="button" title="Edit CCTV" data-modal-target="edit-cctv-modal-{{ $item->id }}">✎</button>
                                 <button class="btn-delete" type="button" title="Hapus CCTV" data-modal-target="delete-cctv-modal-{{ $item->id }}">×</button>
                             </div>

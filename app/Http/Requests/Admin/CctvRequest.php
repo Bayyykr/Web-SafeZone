@@ -16,7 +16,7 @@ class CctvRequest extends FormRequest
         return [
             'lokasi_id' => ['nullable', 'exists:locations,id'],
             'nama' => ['required', 'string', 'max:255'],
-            'url_stream' => ['nullable', 'url', 'max:255'],
+            'url_stream' => ['nullable', 'url', 'max:1000'],
             'keterangan' => ['nullable', 'string', 'max:1000'],
             'aktif' => ['nullable', 'boolean'],
         ];

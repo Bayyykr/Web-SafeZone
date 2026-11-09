@@ -51,6 +51,11 @@ Route::middleware(["auth", "verified", "prevent-back-history"])->group(function 
                 "destroy",
             ]);
             Route::resource("cctvs", CctvController::class);
+            Route::get("cctvs/{cctv}/ai-status", [CctvController::class, "aiStatus"])->name("cctvs.ai-status");
+            Route::post("cctvs/{cctv}/model-select", [CctvController::class, "changeModel"])->name("cctvs.model-select");
+            Route::post("cctvs/{cctv}/camera-source", [CctvController::class, "changeCameraSource"])->name("cctvs.camera-source");
+            Route::post("cctvs/{cctv}/actuator", [CctvController::class, "triggerActuator"])->name("cctvs.actuator");
+            Route::get("cctvs/{cctv}/telemetry", [CctvController::class, "getTelemetry"])->name("cctvs.telemetry");
             Route::resource("locations", LocationController::class)->only([
                 "index",
                 "store",

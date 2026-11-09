@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/map/statistics", [MapDataController::class, "getStatistics"]);
 
+// Mobile View-Only CCTV Endpoints (Hanya Melihat Live Stream, Tanpa Kontrol/Pengaturan)
+Route::get("/cctvs", [CctvController::class, "index"]);
+Route::get("/cctvs/{cctv}", [CctvController::class, "show"]);
+Route::get("/cctvs/{cctv}/telemetry", [CctvController::class, "telemetry"]);
+
 Route::middleware(["auth:sanctum"])->group(function () {
     Route::get("/user", function (Request $request) {
         return new UserResource($request->user());
@@ -29,6 +34,8 @@ Route::middleware(["auth:sanctum"])->group(function () {
 
     Route::get("/home", [HomeController::class, "home"]);
     Route::get("/cctvs", [CctvController::class, "index"]);
+    Route::get("/cctvs/{cctv}", [CctvController::class, "show"]);
+    Route::get("/cctvs/{cctv}/telemetry", [CctvController::class, "telemetry"]);
     Route::get("/reports", [ReportController::class, "index"]);
     Route::get("/reports/create-options", [HomeController::class, "reportOptions"]);
     Route::post("/reports", [ReportController::class, "store"]);
@@ -64,3 +71,6 @@ Route::post("/auth/login", [AuthController::class, "login"]);
 Route::post("/auth/forgot-password", [AuthController::class, "forgotPassword"]);
 Route::post("/auth/reset-password", [AuthController::class, "resetPassword"]);
 Route::post("/auth/google", [AuthController::class, "googleLogin"]);
+
+// Webhook BegalVision AI Incident Report
+Route::post("/incidents/report", [\App\Http\Controllers\Admin\CctvController::class, "reportIncident"]);

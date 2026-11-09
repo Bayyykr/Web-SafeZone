@@ -20,6 +20,13 @@ class CctvSeeder extends Seeder
         
         $cctvs = [
             [
+                'nama' => 'BegalVision Edge AI - Pos Pantau Alun-Alun',
+                'url_stream' => env('AI_STREAM_URL', 'http://127.0.0.1:5000/video_feed'),
+                'keterangan' => 'Unit Deteksi AI BegalVision Continuous Live Stream (Webcam USB + Telemetri ESP-32 PIR/Suara/Lux/Buzzer).',
+                'aktif' => true,
+                'lokasi_id' => $lokasiKota?->id,
+            ],
+            [
                 'nama' => 'CCTV Simpang Toga Lumajang',
                 'url_stream' => 'https://www.youtube.com/watch?v=1d9yv2_aMIs', // Live ATCS Yogyakarta
                 'keterangan' => 'Memantau arus lalu lintas di Simpang Toga Lumajang Kota.',

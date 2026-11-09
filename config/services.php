@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'cctv_ai' => [
+        'base_url' => env('AI_API_BASE_URL', 'http://127.0.0.1:5000'),
+        'stream_url' => env('AI_STREAM_URL', 'http://127.0.0.1:5000/video_feed'),
+        'raw_stream_url' => env('AI_RAW_STREAM_URL', 'http://127.0.0.1:5000/video_feed_raw'),
+        'default_model' => env('AI_DEFAULT_MODEL', 'lyolo.onnx'),
+        'default_conf' => (float) env('AI_DEFAULT_CONF', 0.25),
+        'default_iou' => (float) env('AI_DEFAULT_IOU', 0.45),
+    ],
+
+    'firebase' => [
+        'database_url' => env('FIREBASE_DATABASE_URL', 'https://geocrime-safezone-default-rtdb.firebaseio.com/'),
+    ],
+
 ];
