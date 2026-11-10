@@ -45,7 +45,7 @@ return [
     ],
 
     'firebase' => [
-        'database_url' => env('FIREBASE_DATABASE_URL', 'https://geocrime-safezone-default-rtdb.firebaseio.com/'),
+        'database_url' => env('FIREBASE_DATABASE_URL', 'https://safezone-9088b-default-rtdb.asia-southeast1.firebasedatabase.app/'),
     ],
 
 ];

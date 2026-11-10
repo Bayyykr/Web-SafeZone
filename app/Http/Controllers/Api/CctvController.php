@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CctvResource;
 use App\Models\Cctv;
+use App\Services\FirebaseService;
+use App\Services\MultiModalFuzzyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -85,15 +87,41 @@ class CctvController extends Controller
 
     /**
      * GET /api/cctvs/{cctv}/telemetry
-     * Mengambil pembacaan sensor telemetri ESP-32 real-time untuk widget mobile.
+     * Mengambil pembacaan sensor telemetri ESP-32 real-time dari Firebase RTDB
+     * dan skor Fuzzy Logic multi-modal untuk widget mobile.
      * Mode: View-Only (Sensor pembacaan saja, tanpa kontrol tombol aktuator).
      */
-    public function telemetry(Cctv $cctv): JsonResponse
+    public function telemetry(Cctv $cctv, FirebaseService $firebaseService, MultiModalFuzzyService $fuzzyService): JsonResponse
     {
         $cctv->load('lokasi');
 
-        $lat = $cctv->lokasi?->latitude ? (float) $cctv->lokasi->latitude : -8.133182;
-        $lng = $cctv->lokasi?->longitude ? (float) $cctv->lokasi->longitude : 113.224522;
+        $fbTelemetry = $firebaseService->fetchDeviceTelemetry('BEGAL-VISION-01');
+
+        $sensorNoise = $fbTelemetry['sensors']['noise_db'] ?? 42.0;
+        $sensorLux = $fbTelemetry['sensors']['lux'] ?? 24.0;
+        $sensorPir = !empty($fbTelemetry['sensors']['pir_motion']);
+
+        $fuzzyResult = $fuzzyService->evaluate([
+            'visual_label' => 'normal',
+            'visual_confidence' => 0.0,
+            'noise_db' => $sensorNoise,
+            'lux' => $sensorLux,
+            'pir' => $sensorPir,
+        ]);
+
+        $cctvLat = $cctv->lokasi?->latitude ? (float) $cctv->lokasi->latitude : -8.133182;
+        $cctvLng = $cctv->lokasi?->longitude ? (float) $cctv->lokasi->longitude : 113.224522;
+        $iotLat = $fbTelemetry['gps']['latitude'];
+        $iotLng = $fbTelemetry['gps']['longitude'];
+
+        $proximity = $firebaseService->checkDeviceProximity($cctvLat, $cctvLng, $iotLat, $iotLng, 10.0);
+
+        $lat = $iotLat ?? $cctvLat;
+        $lng = $iotLng ?? $cctvLng;
+
+        $statusGerakan = $sensorPir ? 'Pergerakan Terdeteksi (PIR Aktif)' : 'Aman (Tidak Ada Gerakan)';
+        $statusSuara = ($sensorNoise >= 75) ? 'Teriakan / Suara Bising Tinggi' : (($sensorNoise >= 55) ? 'Aktivitas Normal' : 'Hening');
+        $statusCahaya = ($sensorLux < 20) ? 'Gelap (Malam Hari)' : 'Terang Cukup';
 
         return response()->json([
             'success' => true,
@@ -102,18 +130,43 @@ class CctvController extends Controller
             'is_begalvision' => (bool) $cctv->is_begalvision,
             'can_control' => false,
             'mode' => 'view_only',
+            'iot_proximity' => [
+                'is_matched' => $proximity['is_matched'],
+                'distance_meters' => $proximity['distance_meters'],
+                'max_threshold_meters' => $proximity['max_threshold_meters'],
+                'status_lokasi' => $proximity['is_matched'] ? 'Terdeteksi di Titik CCTV' : 'Di Luar Jangkauan Kamera',
+                'cctv_coords' => ['latitude' => $cctvLat, 'longitude' => $cctvLng],
+                'iot_coords' => ['latitude' => $iotLat, 'longitude' => $iotLng],
+            ],
             'telemetri' => [
-                'pir_motion' => false,
-                'status_gerakan' => 'Aman (Tidak Ada Gerakan)',
-                'noise_db' => rand(38, 52),
-                'status_suara' => 'Normal',
-                'lux' => rand(20, 35),
-                'status_cahaya' => 'Redup (Malam Hari)',
-                'sirine_aktif' => false,
-                'lampu_aktif' => false,
+                'pir_motion' => $sensorPir,
+                'status_gerakan' => $statusGerakan,
+                'noise_db' => $sensorNoise,
+                'raw_audio' => $fbTelemetry['sensors']['raw_audio_level'] ?? null,
+                'status_suara' => $statusSuara,
+                'lux' => $sensorLux,
+                'status_cahaya' => $statusCahaya,
+                'sirine_aktif' => !empty($fbTelemetry['actuators']['siren_active']),
+                'begal_aktif' => !empty($fbTelemetry['status']['begal']),
+                'lampu_aktif' => !empty($fbTelemetry['actuators']['led_active']),
                 'latitude' => $lat,
                 'longitude' => $lng,
                 'timestamp' => now()->format('H:i:s d/m/Y'),
+            ],
+            'fuzzy_threat' => [
+                'skor' => $fuzzyResult['score'],
+                'kategori' => $fuzzyResult['category'],
+                'alarm_otomatis' => $fuzzyResult['is_alarm_triggered'],
+                'aturan_dominan' => [
+                    'kode' => $fuzzyResult['dominant_rule']['code'],
+                    'skor' => $fuzzyResult['dominant_rule']['score'],
+                    'skenario' => $fuzzyResult['dominant_rule']['scenario'],
+                ],
+            ],
+        ]);
+                    'skor' => $fuzzyResult['dominant_rule']['score'],
+                    'skenario' => $fuzzyResult['dominant_rule']['scenario'],
+                ],
             ],
         ]);
     }

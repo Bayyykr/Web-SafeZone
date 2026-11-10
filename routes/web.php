@@ -56,6 +56,7 @@ Route::middleware(["auth", "verified", "prevent-back-history"])->group(function 
             Route::post("cctvs/{cctv}/camera-source", [CctvController::class, "changeCameraSource"])->name("cctvs.camera-source");
             Route::post("cctvs/{cctv}/actuator", [CctvController::class, "triggerActuator"])->name("cctvs.actuator");
             Route::get("cctvs/{cctv}/telemetry", [CctvController::class, "getTelemetry"])->name("cctvs.telemetry");
+            Route::post("cctvs/{cctv}/sync-gps", [CctvController::class, "syncGpsCoordinates"])->name("cctvs.sync-gps");
             Route::resource("locations", LocationController::class)->only([
                 "index",
                 "store",

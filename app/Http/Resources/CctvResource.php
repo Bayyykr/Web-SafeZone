@@ -25,15 +25,12 @@ class CctvResource extends JsonResource
         $telemetri = null;
         if ($isBegalvision) {
             $telemetri = [
-                'pir_motion' => false,
-                'status_gerakan' => 'Aman (Tidak Ada Gerakan)',
-                'noise_db' => rand(40, 50),
-                'status_suara' => 'Normal',
-                'lux' => rand(20, 35),
-                'status_cahaya' => 'Redup',
-                'sirine_aktif' => false,
-                'lampu_aktif' => false,
-                'last_updated' => now()->toIso8601String(),
+                'firebase_connected' => true,
+                'status_sistem' => 'BegalVision Edge AI + Multi-Modal Fuzzy',
+                'auto_trigger_alarm' => true,
+                'threshold_bahaya' => '70%',
+                'telemetry_endpoint' => url("/api/cctvs/{$this->id}/telemetry"),
+                'can_control' => false,
             ];
         }
 
